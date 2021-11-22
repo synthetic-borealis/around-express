@@ -3,7 +3,6 @@ const users = require('./routes/users');
 const cards = require('./routes/cards');
 
 const { PORT = 3000 } = process.env;
-
 const app = express();
 
 const sendNotFoundMessage = (req, res, next) => {
