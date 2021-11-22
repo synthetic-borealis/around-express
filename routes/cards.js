@@ -12,8 +12,14 @@ router.get('/', (req, res) => {
   });
 
   reader.on('end', () => {
-    const parsedCardData = JSON.parse(cardData);
-    res.send(parsedCardData);
+    // JSON.parse throws an exception when
+    // attempting to parse some files (tested with a vsix file).
+    try {
+      const parsedCardData = JSON.parse(cardData);
+      res.send(parsedCardData);
+    } catch (err) {
+      res.status(500).send({ message: 'An error has occured on the server' });
+    }
   });
 
   reader.on('error', () => {

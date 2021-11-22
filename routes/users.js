@@ -13,8 +13,14 @@ router.get('/', (req, res) => {
   });
 
   reader.on('end', () => {
-    const parsedUserData = JSON.parse(userData);
-    res.send(parsedUserData);
+    // JSON.parse throws an exception when
+    // attempting to parse some files (tested with a vsix file).
+    try {
+      const parsedUserData = JSON.parse(userData);
+      res.send(parsedUserData);
+    } catch (err) {
+      res.status(500).send({ message: 'An error has occured on the server' });
+    }
   });
 
   reader.on('error', () => {
@@ -31,8 +37,12 @@ router.get('/:id', (req, res) => {
   });
 
   reader.on('end', () => {
-    const parsedUserData = JSON.parse(userData);
-    const user = parsedUserData.find((usr) => usr._id === req.params.id);
+    try {
+      const parsedUserData = JSON.parse(userData);
+      const user = parsedUserData.find((usr) => usr._id === req.params.id);
+    } catch (err) {
+      res.status(500).send({ message: 'An error has occured on the server' });
+    }
 
     if (user) {
       res.send(user);
