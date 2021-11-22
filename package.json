@@ -4,16 +4,27 @@
   "description": "`/data` — JSON files to temporarily emulate database integration.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "lint": "npx eslint ."
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/synthetic-borealis/around-express.git"
   },
-  "author": "",
+  "author": "Elhanan Flesch",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/synthetic-borealis/around-express/issues"
   },
-  "homepage": "https://github.com/synthetic-borealis/around-express#readme"
+  "homepage": "https://github.com/synthetic-borealis/around-express#readme",
+  "devDependencies": {
+    "eslint": "^8.3.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.3",
+    "nodemon": "^2.0.15"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
