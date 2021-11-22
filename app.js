@@ -1,4 +1,5 @@
 const express = require('express');
+const helmet = require('helmet');
 const users = require('./routes/users');
 const cards = require('./routes/cards');
 
@@ -10,6 +11,7 @@ const sendNotFoundMessage = (req, res, next) => {
   next();
 };
 
+app.use(helmet());
 app.use('/users', users);
 app.use('/cards', cards);
 app.use(sendNotFoundMessage);
