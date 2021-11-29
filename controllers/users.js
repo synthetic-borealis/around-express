@@ -1,7 +1,7 @@
 const User = require('../models/user');
 const { responseMessages } = require('../utils/constants');
 
-module.exports.getAllUsers = (req, res) => {
+const getAllUsers = (req, res) => {
   User.find({})
     .orFail()
     .then((users) => {
@@ -12,25 +12,94 @@ module.exports.getAllUsers = (req, res) => {
     });
 };
 
-module.exports.getUser = (req, res) => {
+const getUser = (req, res) => {
   User.findById(req.params.id)
     .orFail()
     .then((user) => {
       res.send(user);
     })
-    .catch(() => {
-      res.send(404).send({ message: responseMessages.notFound });
+    .catch((error) => {
+      switch (error.name) {
+        // Looking for a non-existing document by id throws a CastError
+        case 'CastError':
+          res.status(404).send({ message: responseMessages.notFound });
+          break;
+
+        default:
+          res.status(500).send({ message: responseMessages.serverError });
+      }
     });
 };
 
-module.exports.createUser = (req, res) => {
+const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
     .then((user) => {
       res.send(user);
     })
-    .catch(() => {
-      res.status(400).send({ message: responseMessages.invalidData });
+    .catch((error) => {
+      switch (error.name) {
+        case 'ValidationError':
+          res.status(400).send({ message: responseMessages.invalidData });
+          break;
+
+        default:
+          res.status(500).send({ message: responseMessages.serverError });
+      }
     });
+};
+
+const updateUserProfile = (req, res) => {
+  const { name, about } = req.body;
+  const userId = req.user._id;
+
+  User.findByIdAndUpdate(userId, { name, about }, { new: true, runValidators: true })
+    .orFail()
+    .then((user) => {
+      res.send(user);
+    })
+    .catch((error) => {
+      switch (error.name) {
+        case 'CastError':
+          res.status(404).send({ message: responseMessages.notFound });
+          break;
+
+        default:
+          res.status(500).send({ message: responseMessages.serverError });
+      }
+    });
+};
+
+const updateUserAvatar = (req, res) => {
+  const { avatar } = req.body;
+  const userId = req.user._id;
+
+  User.findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true })
+    .orFail()
+    .then((user) => {
+      res.send(user);
+    })
+    .catch((error) => {
+      switch (error.name) {
+        case 'ValidationError':
+          res.status(400).send({ message: responseMessages.invalidData });
+          break;
+
+        case 'CastError':
+          res.status(404).send({ message: responseMessages.notFound });
+          break;
+
+        default:
+          res.status(500).send({ message: responseMessages.serverError });
+      }
+    });
+};
+
+module.exports = {
+  getAllUsers,
+  getUser,
+  createUser,
+  updateUserProfile,
+  updateUserAvatar,
 };
