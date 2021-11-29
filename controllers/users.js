@@ -16,10 +16,9 @@ module.exports.getUser = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  // const { name, about, avatar } = req.body;
-  console.log(req.data);
+  const { name, about, avatar } = req.body;
 
-  User.create(req.body)
+  User.create({ name, about, avatar })
     .then((user) => { res.send(user); })
     .catch(() => { res.status(400).send(errorMessages.invalidData); });
 };

@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator(v) {
-        return v.match(urlRegex);
+        return urlRegex.test(v);
       },
     },
   },
