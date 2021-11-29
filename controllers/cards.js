@@ -3,7 +3,6 @@ const { responseMessages } = require('../utils/constants');
 
 const getAllCards = (req, res) => {
   Card.find({})
-    .orFail()
     .populate('owner')
     .populate('likes')
     .then((cards) => {
@@ -22,15 +21,12 @@ const createCard = (req, res) => {
       Card.populate(card, { path: 'owner' })
         .then(() => {
           res.send(card);
-        })
-        .catch(() => {
-          res.status(500).send(responseMessages.serverError);
         });
     })
     .catch((error) => {
       switch (error.name) {
         case 'ValidationError':
-          res.status(400).send({ message: responseMessages.invalidData });
+          res.status(400).send({ message: responseMessages.badRequest });
           break;
 
         default:
@@ -54,15 +50,14 @@ const deleteCard = (req, res) => {
       Card.findByIdAndDelete(cardId)
         .then(() => {
           res.send({ message: responseMessages.cardDeleted });
-        })
-        .catch(() => {
-          res.status(500).send({ message: responseMessages.serverError });
         });
     })
     .catch((error) => {
       switch (error.name) {
-        // Looking for a non-existing document by id can also throw a CastError
         case 'CastError':
+          res.status(400).send({ message: responseMessages.badRequest });
+          break;
+
         case 'DocumentNotFoundError':
           res.status(404).send({ message: responseMessages.notFound });
           break;
@@ -91,6 +86,9 @@ const likeCard = (req, res) => {
     .catch((error) => {
       switch (error.name) {
         case 'CastError':
+          res.status(400).send({ message: responseMessages.badRequest });
+          break;
+
         case 'DocumentNotFoundError':
           res.status(404).send({ message: responseMessages.notFound });
           break;
@@ -119,6 +117,9 @@ const unlikeCard = (req, res) => {
     .catch((error) => {
       switch (error.name) {
         case 'CastError':
+          res.status(400).send({ message: responseMessages.badRequest });
+          break;
+
         case 'DocumentNotFoundError':
           res.status(404).send({ message: responseMessages.notFound });
           break;
