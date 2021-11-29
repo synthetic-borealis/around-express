@@ -26,7 +26,7 @@ const createCard = (req, res) => {
     .catch((error) => {
       switch (error.name) {
         case 'ValidationError':
-          res.status(400).send({ message: responseMessages.invalidData });
+          res.status(400).send({ message: responseMessages.badRequest });
           break;
 
         default:
@@ -55,7 +55,7 @@ const deleteCard = (req, res) => {
     .catch((error) => {
       switch (error.name) {
         case 'CastError':
-          res.status(400).send({ message: responseMessages.invalidData });
+          res.status(400).send({ message: responseMessages.badRequest });
           break;
 
         case 'DocumentNotFoundError':
@@ -86,7 +86,7 @@ const likeCard = (req, res) => {
     .catch((error) => {
       switch (error.name) {
         case 'CastError':
-          res.status(400).send({ message: responseMessages.invalidData });
+          res.status(400).send({ message: responseMessages.badRequest });
           break;
 
         case 'DocumentNotFoundError':
@@ -117,7 +117,7 @@ const unlikeCard = (req, res) => {
     .catch((error) => {
       switch (error.name) {
         case 'CastError':
-          res.status(400).send({ message: responseMessages.invalidData });
+          res.status(400).send({ message: responseMessages.badRequest });
           break;
 
         case 'DocumentNotFoundError':

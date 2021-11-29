@@ -20,7 +20,7 @@ const getUser = (req, res) => {
     .catch((error) => {
       switch (error.name) {
         case 'CastError':
-          res.status(400).send({ message: responseMessages.invalidData });
+          res.status(400).send({ message: responseMessages.badRequest });
           break;
 
         case 'DocumentNotFoundError':
@@ -43,7 +43,7 @@ const createUser = (req, res) => {
     .catch((error) => {
       switch (error.name) {
         case 'ValidationError':
-          res.status(400).send({ message: responseMessages.invalidData });
+          res.status(400).send({ message: responseMessages.badRequest });
           break;
 
         default:
@@ -64,7 +64,7 @@ const updateUserProfile = (req, res) => {
     .catch((error) => {
       switch (error.name) {
         case 'CastError':
-          res.status(400).send({ message: responseMessages.invalidData });
+          res.status(400).send({ message: responseMessages.badRequest });
           break;
 
         case 'DocumentNotFoundError':
@@ -89,11 +89,11 @@ const updateUserAvatar = (req, res) => {
     .catch((error) => {
       switch (error.name) {
         case 'ValidationError':
-          res.status(400).send({ message: responseMessages.invalidData });
+          res.status(400).send({ message: responseMessages.badRequest });
           break;
 
         case 'CastError':
-          res.status(400).send({ message: responseMessages.invalidData });
+          res.status(400).send({ message: responseMessages.badRequest });
           break;
 
         default:
