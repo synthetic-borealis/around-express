@@ -3,7 +3,6 @@ const { responseMessages } = require('../utils/constants');
 
 const getAllUsers = (req, res) => {
   User.find({})
-    .orFail()
     .then((users) => {
       res.send(users);
     })
@@ -20,8 +19,10 @@ const getUser = (req, res) => {
     })
     .catch((error) => {
       switch (error.name) {
-        // Looking for a non-existing document by id throws a CastError sometimes
         case 'CastError':
+          res.status(400).send({ message: responseMessages.invalidData });
+          break;
+
         case 'DocumentNotFoundError':
           res.status(404).send({ message: responseMessages.notFound });
           break;
@@ -63,6 +64,9 @@ const updateUserProfile = (req, res) => {
     .catch((error) => {
       switch (error.name) {
         case 'CastError':
+          res.status(400).send({ message: responseMessages.invalidData });
+          break;
+
         case 'DocumentNotFoundError':
           res.status(404).send({ message: responseMessages.notFound });
           break;
@@ -89,7 +93,7 @@ const updateUserAvatar = (req, res) => {
           break;
 
         case 'CastError':
-          res.status(404).send({ message: responseMessages.notFound });
+          res.status(400).send({ message: responseMessages.invalidData });
           break;
 
         default:
