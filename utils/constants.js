@@ -1,9 +1,11 @@
-const errorMessages = {
-  notFound: { message: 'Card or user not found' },
-  invalidData: { message: 'Bad request' },
-  serverError: { message: 'An error has occured on the server' },
-  unauthorized: { message: 'Unauthorized user' },
-  forbidden: { message: 'Unautorized action' },
+const responseMessages = {
+  // Error Messages
+  notFound: 'Requested resource not found',
+  invalidData: 'Bad request',
+  serverError: 'An error has occured on the server',
+  unauthorized: 'Unauthorized user or action',
+  // Other Responses
+  cardDeleted: 'The card has been deleted',
 };
 
-module.exports = { errorMessages };
+module.exports = { responseMessages };

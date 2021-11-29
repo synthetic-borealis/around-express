@@ -1,6 +1,6 @@
 const Card = require('../models/card');
 const User = require('../models/user');
-const { errorMessages } = require('../utils/constants');
+const { responseMessages } = require('../utils/constants');
 
 module.exports.getAllCards = (req, res) => {
   Card.find({})
@@ -11,7 +11,7 @@ module.exports.getAllCards = (req, res) => {
       res.send(cards);
     })
     .catch(() => {
-      res.status(500).send(errorMessages.serverError);
+      res.status(500).send({ message: responseMessages.serverError });
     });
 };
 
@@ -23,11 +23,15 @@ module.exports.createCard = (req, res) => {
     .orFail()
     .then((owner) => {
       Card.create({ name, link, owner })
-        .then((card) => { res.send(card); })
-        .catch(() => { res.status(400).send(errorMessages.invalidData); });
+        .then((card) => {
+          res.send(card);
+        })
+        .catch(() => {
+          res.status(400).send({ message: responseMessages.invalidData });
+        });
     })
     .catch(() => {
-      res.status(401).send(errorMessages.unauthorized);
+      res.status(401).send({ message: responseMessages.unauthorized });
     });
 };
 
@@ -39,15 +43,19 @@ module.exports.deleteCard = (req, res) => {
     .orFail()
     .then((card) => {
       if (card.owner._id.toString() !== userId) {
-        res.status(403).send(errorMessages.forbidden);
+        res.status(403).send({ message: responseMessages.unauthorized });
         return;
       }
 
       Card.findByIdAndDelete(cardId)
-        .then(() => { res.send({ message: 'The card has been deleted' }); })
-        .catch(() => { res.status(500).send(errorMessages.serverError); });
+        .then(() => {
+          res.send({ message: responseMessages.cardDeleted });
+        })
+        .catch(() => {
+          res.status(500).send({ message: responseMessages.serverError });
+        });
     })
     .catch(() => {
-      res.status(404).send(errorMessages.notFound);
+      res.status(404).send({ message: responseMessages.notFound });
     });
 };

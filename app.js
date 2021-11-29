@@ -3,6 +3,7 @@ const helmet = require('helmet');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
+const { errorMessages } = require('./utils/constants');
 const users = require('./routes/users');
 const cards = require('./routes/cards');
 
@@ -15,7 +16,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 mongoose.connect('mongodb://localhost:27017/aroundb');
 
 const sendNotFoundMessage = (req, res, next) => {
-  res.status(404).send({ message: 'Requested resource not found' });
+  res.status(404).send({ message: errorMessages.notFound });
   next();
 };
 
