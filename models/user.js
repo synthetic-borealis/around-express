@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { urlRegex } = require('../utils/helpers');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -18,7 +19,6 @@ const userSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator(v) {
-        const urlRegex = /^https?:\/{2}(www.)?[-a-z0-9]{2,256}\.[a-z]{2,6}(\/[a-z0-9._~:/?%#[\]@!$&'()*+,;=]*)?$/i;
         return v.match(urlRegex);
       },
     },
