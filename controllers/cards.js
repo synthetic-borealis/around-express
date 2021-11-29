@@ -43,6 +43,7 @@ const createCard = (req, res) => {
         // Looking for a non-existing document by id throws a CastError sometimes
         case 'CastError':
         case 'DocumentNotFoundError':
+          // user not in the database = unauthorized
           res.status(401).send({ message: responseMessages.unauthorized });
           break;
 
