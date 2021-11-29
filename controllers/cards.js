@@ -19,6 +19,7 @@ const createCard = (req, res) => {
   const { name, link } = req.body;
   const ownerId = req.user._id;
 
+  // Ensure only known users can create or manipulate card data
   User.findById(ownerId)
     .orFail()
     .then((owner) => {
@@ -66,25 +67,29 @@ const likeCard = (req, res) => {
 
   User.findById(userId)
     .orFail()
-    .then((user) => {
-      Card.findById(cardId)
+    .then(() => {
+      Card.findByIdAndUpdate(
+        cardId,
+        { $addToSet: { likes: userId } },
+        { new: true },
+      )
         .orFail()
-        .then(({ likes }) => {
-          likes.addToSet(user);
-
-          Card.findByIdAndUpdate(cardId, { likes }, { new: true })
-            .orFail()
-            .populate('owner')
-            .populate('likes')
-            .then((card) => {
-              res.send(card);
-            })
-            .catch((error) => {
-              res.status(500).send({ message: error.name });
-            });
+        .populate('owner')
+        .populate('likes')
+        .then((card) => {
+          res.send(card);
         })
-        .catch(() => {
-          res.status(404).send({ message: responseMessages.notFound });
+        .catch((error) => {
+          switch (error.name) {
+            // Looking for a non-existing document by id throws a CastError sometimes
+            case 'CastError':
+            case 'DocumentNotFoundError':
+              res.status(404).send({ message: responseMessages.notFound });
+              break;
+
+            default:
+              res.status(500).send({ message: responseMessages.serverError });
+          }
         });
     })
     .catch(() => {
@@ -98,8 +103,30 @@ const unlikeCard = (req, res) => {
 
   User.findById(userId)
     .orFail()
-    .then((user) => {
-      //
+    .then(() => {
+      Card.findByIdAndUpdate(
+        cardId,
+        { $pull: { likes: userId } },
+        { new: true },
+      )
+        .orFail()
+        .populate('owner')
+        .populate('likes')
+        .then((card) => {
+          res.send(card);
+        })
+        .catch((error) => {
+          switch (error.name) {
+            // Looking for a non-existing document by id throws a CastError sometimes
+            case 'CastError':
+            case 'DocumentNotFoundError':
+              res.status(404).send({ message: responseMessages.notFound });
+              break;
+
+            default:
+              res.status(500).send({ message: responseMessages.serverError });
+          }
+        });
     })
     .catch(() => {
       res.status(401).send({ message: responseMessages.unauthorized });
