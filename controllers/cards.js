@@ -27,12 +27,28 @@ const createCard = (req, res) => {
         .then((card) => {
           res.send(card);
         })
-        .catch(() => {
-          res.status(400).send({ message: responseMessages.invalidData });
+        .catch((error) => {
+          switch (error.name) {
+            case 'ValidationError':
+              res.status(400).send({ message: responseMessages.invalidData });
+              break;
+
+            default:
+              res.status(500).send({ message: responseMessages.serverError });
+          }
         });
     })
-    .catch(() => {
-      res.status(401).send({ message: responseMessages.unauthorized });
+    .catch((error) => {
+      switch (error.name) {
+        // Looking for a non-existing document by id throws a CastError sometimes
+        case 'CastError':
+        case 'DocumentNotFoundError':
+          res.status(401).send({ message: responseMessages.unauthorized });
+          break;
+
+        default:
+          res.status(500).send({ message: responseMessages.serverError });
+      }
     });
 };
 
@@ -56,8 +72,16 @@ const deleteCard = (req, res) => {
           res.status(500).send({ message: responseMessages.serverError });
         });
     })
-    .catch(() => {
-      res.status(404).send({ message: responseMessages.notFound });
+    .catch((error) => {
+      switch (error.name) {
+        case 'CastError':
+        case 'DocumentNotFoundError':
+          res.status(404).send({ message: responseMessages.notFound });
+          break;
+
+        default:
+          res.status(500).send({ message: responseMessages.serverError });
+      }
     });
 };
 
@@ -81,7 +105,6 @@ const likeCard = (req, res) => {
         })
         .catch((error) => {
           switch (error.name) {
-            // Looking for a non-existing document by id throws a CastError sometimes
             case 'CastError':
             case 'DocumentNotFoundError':
               res.status(404).send({ message: responseMessages.notFound });
@@ -92,8 +115,16 @@ const likeCard = (req, res) => {
           }
         });
     })
-    .catch(() => {
-      res.status(401).send({ message: responseMessages.unauthorized });
+    .catch((error) => {
+      switch (error.name) {
+        case 'CastError':
+        case 'DocumentNotFoundError':
+          res.status(401).send({ message: responseMessages.unauthorized });
+          break;
+
+        default:
+          res.status(500).send({ message: responseMessages.serverError });
+      }
     });
 };
 
@@ -117,7 +148,6 @@ const unlikeCard = (req, res) => {
         })
         .catch((error) => {
           switch (error.name) {
-            // Looking for a non-existing document by id throws a CastError sometimes
             case 'CastError':
             case 'DocumentNotFoundError':
               res.status(404).send({ message: responseMessages.notFound });
