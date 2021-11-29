@@ -9,6 +9,8 @@ A back-end for the Around the U.S. web-site.
 ## Built With
 - Node.js
 - Express.js
+- MongoDB
+- Mongoose
 
 ## Running the Project
 - `npm run start` — to launch the server.
