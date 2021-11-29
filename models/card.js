@@ -13,7 +13,7 @@ const cardSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator(v) {
-        return v.match(urlRegex);
+        return urlRegex.test(v);
       },
     },
   },
@@ -25,6 +25,7 @@ const cardSchema = new mongoose.Schema({
   likes: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
+    required: true,
   }],
   createdAt: {
     type: Date,

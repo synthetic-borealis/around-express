@@ -20,6 +20,14 @@ const sendNotFoundMessage = (req, res, next) => {
 };
 
 app.use(helmet());
+
+app.use((req, res, next) => {
+  req.user = {
+    _id: '61a4a152c6b4bc521792c492',
+  };
+  next();
+});
+
 app.use('/users', users);
 app.use('/cards', cards);
 app.use(sendNotFoundMessage);
