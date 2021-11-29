@@ -2,7 +2,7 @@ const Card = require('../models/card');
 const User = require('../models/user');
 const { responseMessages } = require('../utils/constants');
 
-module.exports.getAllCards = (req, res) => {
+const getAllCards = (req, res) => {
   Card.find({})
     .orFail()
     .populate('owner')
@@ -15,7 +15,7 @@ module.exports.getAllCards = (req, res) => {
     });
 };
 
-module.exports.createCard = (req, res) => {
+const createCard = (req, res) => {
   const { name, link } = req.body;
   const ownerId = req.user._id;
 
@@ -35,7 +35,7 @@ module.exports.createCard = (req, res) => {
     });
 };
 
-module.exports.deleteCard = (req, res) => {
+const deleteCard = (req, res) => {
   const { cardId } = req.params;
   const userId = req.user._id;
 
@@ -58,4 +58,58 @@ module.exports.deleteCard = (req, res) => {
     .catch(() => {
       res.status(404).send({ message: responseMessages.notFound });
     });
+};
+
+const likeCard = (req, res) => {
+  const { cardId } = req.params;
+  const userId = req.user._id;
+
+  User.findById(userId)
+    .orFail()
+    .then((user) => {
+      Card.findById(cardId)
+        .orFail()
+        .then(({ likes }) => {
+          likes.addToSet(user);
+
+          Card.findByIdAndUpdate(cardId, { likes }, { new: true })
+            .orFail()
+            .populate('owner')
+            .populate('likes')
+            .then((card) => {
+              res.send(card);
+            })
+            .catch((error) => {
+              res.status(500).send({ message: error.name });
+            });
+        })
+        .catch(() => {
+          res.status(404).send({ message: responseMessages.notFound });
+        });
+    })
+    .catch(() => {
+      res.status(401).send({ message: responseMessages.unauthorized });
+    });
+};
+
+const unlikeCard = (req, res) => {
+  const { cardId } = req.params;
+  const userId = req.user._id;
+
+  User.findById(userId)
+    .orFail()
+    .then((user) => {
+      //
+    })
+    .catch(() => {
+      res.status(401).send({ message: responseMessages.unauthorized });
+    });
+};
+
+module.exports = {
+  getAllCards,
+  createCard,
+  deleteCard,
+  likeCard,
+  unlikeCard,
 };

@@ -20,8 +20,9 @@ const getUser = (req, res) => {
     })
     .catch((error) => {
       switch (error.name) {
-        // Looking for a non-existing document by id throws a CastError
+        // Looking for a non-existing document by id throws a CastError sometimes
         case 'CastError':
+        case 'DocumentNotFoundError':
           res.status(404).send({ message: responseMessages.notFound });
           break;
 
@@ -62,6 +63,7 @@ const updateUserProfile = (req, res) => {
     .catch((error) => {
       switch (error.name) {
         case 'CastError':
+        case 'DocumentNotFoundError':
           res.status(404).send({ message: responseMessages.notFound });
           break;
 
